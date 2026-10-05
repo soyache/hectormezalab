@@ -1,0 +1,100 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: '/#apps', label: 'Apps' },
+  { href: '/privacidad', label: 'Privacidad' },
+];
+
+const year = 2026;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0B1220" />
+    <meta name="author" content="Héctor Meza" />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="flex flex-col antialiased">
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <header class="relative z-20 border-b border-line">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
+        <a href="/" class="font-display text-[1.35rem] leading-none tracking-tight text-paper">
+          HectorMeza<span class="text-amber">Lab</span>
+        </a>
+        <nav class="hidden items-center gap-6 md:flex" aria-label="Principal">
+          {
+            links.map((link) => (
+              <a
+                href={link.href}
+                class="text-sm text-muted hover:text-paper"
+                aria-current={path === link.href ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+          <a href="mailto:hectormezalab@gmail.com" class="text-sm text-muted hover:text-paper">
+            Correo
+          </a>
+        </nav>
+        <details class="relative md:hidden">
+          <summary class="cursor-pointer rounded-full border border-line px-4 py-2 text-sm">
+            Menú
+          </summary>
+          <nav class="absolute right-0 mt-2 w-56 border border-line bg-panel p-3 shadow-2xl" aria-label="Principal">
+            <ul class="grid gap-1">
+              {
+                links.map((link) => (
+                  <li>
+                    <a href={link.href} class="block rounded-md px-3 py-2 hover:bg-card">
+                      {link.label}
+                    </a>
+                  </li>
+                ))
+              }
+              <li>
+                <a href="mailto:hectormezalab@gmail.com" class="block rounded-md px-3 py-2 hover:bg-card">
+                  Correo
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="contenido" class="relative z-10 flex-1">
+      <slot />
+    </main>
+    <footer class="relative z-10 border-t border-line">
+      <div class="mx-auto flex max-w-5xl flex-col gap-4 px-5 py-8 text-sm text-muted md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="font-display text-lg text-paper">
+            HectorMeza<span class="text-amber">Lab</span>
+          </p>
+          <p class="mt-1">Héctor Meza · Honduras</p>
+        </div>
+        <div class="flex flex-col gap-2 md:items-end">
+          <a class="underline decoration-line underline-offset-4 hover:text-paper" href="mailto:hectormezalab@gmail.com">
+            hectormezalab@gmail.com
+          </a>
+          <a class="hover:text-paper" href="/privacidad">Privacidad del sitio</a>
+          <p>© {year}</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

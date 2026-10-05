@@ -1,0 +1,51 @@
+---
+import type { AppRecord } from '../data/apps';
+
+interface Props {
+  app: AppRecord;
+}
+
+const { app } = Astro.props;
+const ficha = `/apps/${app.slug}`;
+---
+
+<article class="@container border border-line bg-card p-5 sm:p-7">
+  <div class="flex flex-col gap-6 @min-[40rem]:flex-row @min-[40rem]:items-end @min-[40rem]:justify-between">
+    <div class="min-w-0">
+      <p class="font-mono text-xs uppercase tracking-[0.16em] text-amber">
+        {app.platform} · {app.status}
+      </p>
+      <h3 class="mt-3 font-display text-3xl leading-none tracking-tight">
+        <a class="hover:text-amber" href={ficha}>{app.name}</a>
+      </h3>
+      <p class="mt-4 max-w-xl text-base leading-relaxed text-muted">{app.summary}</p>
+      <p class="mt-4 truncate font-mono text-xs text-paper">{app.packageId}</p>
+    </div>
+    <div class="flex shrink-0 flex-col gap-3 sm:flex-row @min-[40rem]:flex-col @min-[40rem]:items-stretch">
+      {
+        app.playUrl && (
+          <a
+            href={app.playUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-12 items-center justify-center rounded-full bg-amber px-5 font-bold text-amber-ink hover:bg-amber-hot"
+          >
+            Google Play
+            <span class="sr-only"> (se abre en una pestaña nueva)</span>
+          </a>
+        )
+      }
+      <a
+        href={ficha}
+        class="inline-flex min-h-12 items-center justify-center px-2 text-paper underline decoration-amber decoration-2 underline-offset-4"
+      >
+        Ver la ficha
+      </a>
+    </div>
+  </div>
+  {
+    app.cardNote && (
+      <p class="mt-6 border-t border-line pt-4 text-sm leading-relaxed text-muted">{app.cardNote}</p>
+    )
+  }
+</article>
