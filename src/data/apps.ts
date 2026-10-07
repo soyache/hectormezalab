@@ -24,7 +24,11 @@ export type AppRecord = {
   };
   privacy: {
     intro: string;
-    points: string[];
+    /**
+     * 'admob' incluye en la política la divulgación del SDK de Google Mobile Ads.
+     * No lo marques si la app no muestra anuncios con AdMob.
+     */
+    ads?: 'admob';
   };
 };
 
@@ -57,12 +61,8 @@ export const apps: AppRecord[] = [
     },
     privacy: {
       intro:
-        'Prestaciones Laboral Honduras calcula en el teléfono con el salario, las fechas y los rubros que escribes. No hace falta crear una cuenta para ver el total.',
-      points: [
-        'Esos datos sirven para armar el desglose en el dispositivo.',
-        'Si la versión publicada muestra anuncios, Google AdMob puede tratar identificadores del dispositivo según su propia política.',
-        'La autorización de AdMob está en /app-ads.txt, en la raíz del sitio del desarrollador. No existe una copia bajo la ruta de esta app.',
-      ],
+        'El salario, las fechas y los rubros que usted escribe se usan en el dispositivo para el cálculo y no los enviamos a nuestros servidores. La aplicación no tiene un servidor propio. No se requiere una cuenta para ver el resultado.',
+      ads: 'admob',
     },
   },
 ];
