@@ -1,35 +1,74 @@
 /**
  * Catálogo de HectorMezaLab. Para sumar una app, agrega un objeto a `apps`.
- * El inicio, la ficha y la privacidad de cada app salen de esta lista.
+ * `publicada`: tarjeta en el inicio, ficha y política de privacidad.
+ * `prueba`: solo `/apps/<slug>/privacidad` y el listado de `/privacidad`.
+ * No entra en el catálogo ni lleva enlace a Google Play.
  * app-ads.txt vive solo en la raíz del sitio (`public/app-ads.txt`).
  * AdMob no lee copias bajo /apps/ ni bajo el paquete.
  */
+export type TextPart = string | { href: string; label: string };
+
+export type PrivacyBlock =
+  | { type: 'p'; parts: TextPart[] }
+  | { type: 'ul'; items: string[] };
+
+export type PrivacySection = {
+  heading: string;
+  /** Por ejemplo `en` en la versión corta en inglés. */
+  lang?: string;
+  blocks: PrivacyBlock[];
+};
+
+/** Política con texto propio. No reutiliza el texto fijo de Prestaciones. */
+export type DocumentPrivacy = {
+  lead: string;
+  sections: PrivacySection[];
+};
+
+/** Política que sigue renderizando la página fija de Prestaciones Laboral. */
+export type CatalogPrivacy = {
+  intro: string;
+  /**
+   * 'admob' incluye en la política la divulgación del SDK de Google Mobile Ads.
+   * No lo marques si la app no muestra anuncios con AdMob.
+   */
+  ads?: 'admob';
+};
+
 export type AppRecord = {
   slug: string;
   name: string;
   summary: string;
   platform: 'Android';
-  status: 'publicada';
+  status: 'publicada' | 'prueba';
   packageId: string;
   playUrl?: string;
   /** Nota breve en la tarjeta. El aviso completo vive en la ficha. */
   cardNote?: string;
-  /** Pasos reales de la app, en el orden de uso. */
-  steps: string[];
+  /** Pasos reales de la app, en el orden de uso. Omítelos si no constan. */
+  steps?: string[];
   /** Viñeta propia de la ficha. No la reutilices en otra app. */
   sample?: 'boleta';
   disclaimer?: {
     text: string;
     links: { href: string; label: string }[];
   };
-  privacy: {
-    intro: string;
-    /**
-     * 'admob' incluye en la política la divulgación del SDK de Google Mobile Ads.
-     * No lo marques si la app no muestra anuncios con AdMob.
-     */
-    ads?: 'admob';
-  };
+  privacy: CatalogPrivacy | DocumentPrivacy;
+};
+
+const googlePartner = {
+  href: 'https://policies.google.com/technologies/partner-sites',
+  label: 'Cómo usa Google los datos de las apps de sus socios',
+};
+
+const googlePrivacy = {
+  href: 'https://policies.google.com/privacy',
+  label: 'Política de privacidad de Google',
+};
+
+const contactEmail = {
+  href: 'mailto:hectormezalab@gmail.com',
+  label: 'hectormezalab@gmail.com',
 };
 
 export const apps: AppRecord[] = [
@@ -65,8 +104,371 @@ export const apps: AppRecord[] = [
       ads: 'admob',
     },
   },
+  {
+    slug: 'spelling-bee',
+    name: 'Spelling Bee',
+    summary:
+      'Dictado de Palabras – Spelling. Las listas de palabras, el idioma elegido y las estadísticas se guardan solo en el dispositivo.',
+    platform: 'Android',
+    status: 'publicada',
+    packageId: 'com.hectormezalab.spellingbee',
+    playUrl: 'https://play.google.com/store/apps/details?id=com.hectormezalab.spellingbee',
+    privacy: {
+      lead: 'Esta política explica cómo la aplicación Spelling Bee (paquete com.hectormezalab.spellingbee), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
+      sections: [
+        {
+          heading: 'Resumen',
+          blocks: [
+            {
+              type: 'ul',
+              items: [
+                'No hay cuentas ni inicio de sesión.',
+                'Las listas de palabras (una por cada idioma que usted aprende), el idioma elegido y las estadísticas se guardan solo en el dispositivo. No las recibimos ni las enviamos a ningún servidor nuestro.',
+                'La aplicación muestra anuncios de Google AdMob, que puede recopilar ciertos datos del dispositivo para servir y medir anuncios.',
+                'Usted puede eliminar los anuncios con una compra única gestionada por Google Play.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '1. Información que se guarda en el dispositivo',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Para funcionar, la aplicación guarda localmente, en el almacenamiento privado de la aplicación:',
+              ],
+            },
+            {
+              type: 'ul',
+              items: [
+                'Las listas de palabras que usted agrega, una por cada idioma que aprende (inglés, español, francés, alemán o italiano).',
+                'El idioma que usted eligió aprender.',
+                'Estadísticas de juego por idioma (partidas jugadas, aciertos, mejor puntaje).',
+                'Si usted compró la eliminación de anuncios, y sus preferencias de consentimiento de anuncios.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Esta información no sale del dispositivo por nuestra parte. Se borra si usted desinstala la aplicación o borra sus datos desde los ajustes de Android.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '2. Pronunciación de palabras (texto a voz)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Para pronunciar las palabras, la aplicación usa el motor de texto a voz instalado en el dispositivo (por ejemplo, Google Speech Services). La aplicación prefiere voces que funcionan sin conexión. Si el motor usa una voz en línea, el texto de la palabra puede ser procesado por el proveedor de ese motor según su propia política de privacidad.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '3. Publicidad (Google AdMob)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La versión gratuita muestra anuncios mediante Google AdMob. Google puede recopilar y usar datos como el identificador de publicidad del dispositivo, la dirección IP, información del dispositivo y del sistema, e interacciones con los anuncios, para mostrar, medir y, cuando usted lo permita, personalizar anuncios.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Si usted está en el Espacio Económico Europeo, el Reino Unido o Suiza, la aplicación le pedirá su consentimiento mediante la plataforma de mensajes de Google (UMP) antes de mostrar anuncios personalizados. Puede cambiar su elección desde la opción «Privacy options» en la pantalla de configuración.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Puede restablecer o desactivar el identificador de publicidad en los ajustes de Android (Google, Anuncios).',
+              ],
+            },
+            {
+              type: 'p',
+              parts: ['Más información: ', googlePartner, ' y ', googlePrivacy, '.'],
+            },
+          ],
+        },
+        {
+          heading: '4. Compras dentro de la aplicación',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La compra única para eliminar anuncios la procesa Google Play. No recibimos ni guardamos los datos de su tarjeta ni de su cuenta de pago. Google nos informa únicamente si la compra se realizó, para poder desactivar los anuncios y restaurarla si usted reinstala la aplicación.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '5. Información que no recopilamos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'No recopilamos su nombre, correo, contactos, ubicación precisa, fotos, micrófono ni ningún otro dato personal. La aplicación no tiene cuentas de usuario.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '6. Menores de edad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación está dirigida al público general y no está diseñada específicamente para niños menores de 13 años. No recopilamos a sabiendas datos personales de niños. Si usted cree que un niño nos proporcionó información, contáctenos y la eliminaremos.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '7. Seguridad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Los datos locales se guardan en el almacenamiento privado de la aplicación, al que otras aplicaciones no pueden acceder. Ningún método de almacenamiento es 100 % seguro, pero aplicamos medidas razonables.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '8. Sus derechos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Como no tenemos sus datos en nuestros servidores, usted puede ejercer el control directamente: borrar palabras desde la aplicación, borrar los datos de la aplicación desde los ajustes de Android o desinstalarla. Para los datos de publicidad, use las opciones de privacidad de la aplicación o los ajustes de anuncios de Google.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '9. Cambios de esta política',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Podemos actualizar esta política. Publicaremos la versión nueva en esta página con su fecha de actualización.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '10. Contacto',
+          blocks: [
+            {
+              type: 'p',
+              parts: ['Si tiene preguntas sobre esta política, escríbanos a ', contactEmail, '.'],
+            },
+          ],
+        },
+        {
+          heading: 'Privacy Policy – Spelling Bee',
+          lang: 'en',
+          blocks: [
+            { type: 'p', parts: ['Last updated: October 7, 2026.'] },
+            {
+              type: 'p',
+              parts: [
+                "Spelling Bee (com.hectormezalab.spellingbee), by HectorMezaLab, has no accounts or login. Your word lists (one per learning language), your chosen learning language and your game statistics are stored only on your device and are never sent to our servers. Words are spoken by your device's text-to-speech engine; if that engine uses an online voice, its provider may process the word text under its own policy.",
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'The free version shows ads from Google AdMob, which may collect the device advertising ID, IP address, device information and ad interactions to serve, measure and, with your consent, personalize ads. Users in the EEA, UK and Switzerland are asked for consent through Google\'s User Messaging Platform and can change it via "Privacy options" in the settings screen. See how Google uses data from partner apps: ',
+                {
+                  href: 'https://policies.google.com/technologies/partner-sites',
+                  label: 'https://policies.google.com/technologies/partner-sites',
+                },
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'The one-time "remove ads" purchase is processed by Google Play; we never receive your payment details, only whether the purchase exists. We do not collect names, emails, contacts, location, photos or microphone data. The app is intended for a general audience and is not directed at children under 13. We may update this policy and will post changes here. Contact: ',
+                contactEmail,
+                '.',
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    slug: 'practicar-multiplicaciones',
+    name: 'Practicar Multiplicaciones',
+    summary: 'La racha de práctica y el ejercicio actual se guardan solo en el dispositivo.',
+    platform: 'Android',
+    status: 'prueba',
+    packageId: 'com.soyache.sallymath',
+    privacy: {
+      lead: 'Esta política explica cómo la aplicación Practicar Multiplicaciones (paquete com.soyache.sallymath), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
+      sections: [
+        {
+          heading: 'Resumen',
+          blocks: [
+            {
+              type: 'ul',
+              items: [
+                'No hay cuentas ni inicio de sesión.',
+                'La racha de práctica y el ejercicio actual se guardan solo en el dispositivo. No los recibimos ni los enviamos a ningún servidor nuestro.',
+                'La aplicación muestra anuncios de Google AdMob, que puede recopilar ciertos datos del dispositivo para servir y medir anuncios, además de fines de análisis y prevención de fraude.',
+                'Usted puede quitar los anuncios con una compra única gestionada por Google Play.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '1. Información que se guarda en el dispositivo',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Para funcionar, la aplicación guarda localmente, en el almacenamiento privado de la aplicación:',
+              ],
+            },
+            {
+              type: 'ul',
+              items: ['La racha de práctica.', 'El ejercicio actual.'],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Esta información no sale del dispositivo por nuestra parte. Se borra si usted desinstala la aplicación o borra sus datos desde los ajustes de Android.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: ['La aplicación no requiere una cuenta.'],
+            },
+          ],
+        },
+        {
+          heading: '2. Publicidad (Google AdMob)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La versión gratuita muestra anuncios mediante Google AdMob. AdMob puede recopilar y tratar datos como la ubicación aproximada inferida a partir de la dirección IP, las interacciones con la aplicación, datos de diagnóstico, información del dispositivo y los identificadores del dispositivo o de publicidad. Puede compartir o usar estos datos para publicidad, análisis y prevención de fraude. Los datos se cifran en tránsito.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Si usted está en el Espacio Económico Europeo o el Reino Unido, la aplicación muestra el formulario de consentimiento de Google (UMP) antes de solicitar anuncios. Puede cambiar su elección desde las opciones de privacidad disponibles en la aplicación, cuando estén disponibles.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: ['La aplicación no está dirigida a niños.'],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Puede restablecer o desactivar el identificador de publicidad en los ajustes de Android (Google, Anuncios).',
+              ],
+            },
+            {
+              type: 'p',
+              parts: ['Más información: ', googlePartner, ' y ', googlePrivacy, '.'],
+            },
+          ],
+        },
+        {
+          heading: '3. Compras dentro de la aplicación',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La compra única del producto remove_ads («Quitar anuncios») la procesa Google Play. El desarrollador no recibe ni guarda el número de su tarjeta ni los datos de su cuenta de pago. Google nos informa únicamente si la compra se realizó, para poder quitar los anuncios y restaurarla si usted reinstala la aplicación.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '4. Información que no recopilamos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'No recopilamos directamente su nombre, correo, contactos, ubicación precisa, fotos ni micrófono. La aplicación no tiene cuentas de usuario. Google AdMob puede tratar los datos descritos en la sección 2 para sus propios fines de publicidad, análisis y prevención de fraude.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '5. Menores de edad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación está dirigida al público general y no está dirigida a niños. No recopilamos a sabiendas datos personales de niños. Si usted cree que un niño nos proporcionó información, contáctenos y la eliminaremos.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '6. Seguridad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Los datos locales se guardan en el almacenamiento privado de la aplicación, al que otras aplicaciones no pueden acceder. Los datos de AdMob se cifran en tránsito. Ningún método de almacenamiento o transmisión es 100 % seguro, pero aplicamos medidas razonables.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '7. Sus derechos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Como no tenemos sus datos de práctica en nuestros servidores, usted puede ejercer el control directamente: borrar los datos de la aplicación desde los ajustes de Android o desinstalarla. Para los datos de publicidad, use las opciones de privacidad de la aplicación o los ajustes de anuncios de Google.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '8. Cambios de esta política',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Podemos actualizar esta política. Publicaremos la versión nueva en esta página con su fecha de actualización.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '9. Contacto',
+          blocks: [
+            {
+              type: 'p',
+              parts: ['Si tiene preguntas sobre esta política, escríbanos a ', contactEmail, '.'],
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
+
+export const publishedApps = apps.filter((app) => app.status === 'publicada');
 
 export function getApp(slug: string) {
   return apps.find((app) => app.slug === slug);
+}
+
+export function isDocumentPrivacy(privacy: AppRecord['privacy']): privacy is DocumentPrivacy {
+  return 'sections' in privacy;
 }

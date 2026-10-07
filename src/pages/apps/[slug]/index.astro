@@ -4,10 +4,12 @@ import Base from '../../../layouts/Base.astro';
 import Boleta from '../../../components/Boleta.astro';
 
 export function getStaticPaths() {
-  return apps.map((app) => ({
-    params: { slug: app.slug },
-    props: { app },
-  }));
+  return apps
+    .filter((app) => app.status === 'publicada')
+    .map((app) => ({
+      params: { slug: app.slug },
+      props: { app },
+    }));
 }
 
 interface Props {
@@ -50,17 +52,19 @@ const { app } = Astro.props;
             Privacidad de la app
           </a>
         </div>
-        <ol class="mt-10 border-l border-line">
-          {
-            app.steps.map((step, index) => (
-              <li class="relative pb-7 pl-7 last:pb-0">
-                <span class="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber" aria-hidden="true" />
-                <p class="font-mono text-xs uppercase tracking-[0.16em] text-amber">{index + 1}</p>
-                <p class="mt-2 max-w-md text-lg leading-relaxed">{step}</p>
-              </li>
-            ))
-          }
-        </ol>
+        {
+          app.steps && app.steps.length > 0 && (
+            <ol class="mt-10 border-l border-line">
+              {app.steps.map((step, index) => (
+                <li class="relative pb-7 pl-7 last:pb-0">
+                  <span class="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full bg-amber" aria-hidden="true" />
+                  <p class="font-mono text-xs uppercase tracking-[0.16em] text-amber">{index + 1}</p>
+                  <p class="mt-2 max-w-md text-lg leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ol>
+          )
+        }
       </div>
       {app.sample === 'boleta' && <Boleta />}
     </div>

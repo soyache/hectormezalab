@@ -1,0 +1,35 @@
+---
+import type { TextPart } from '../data/apps';
+
+interface Props {
+  parts: TextPart[];
+}
+
+const { parts } = Astro.props;
+
+function isExternal(href: string) {
+  return href.startsWith('http://') || href.startsWith('https://');
+}
+---
+
+{
+  parts.map((part) =>
+    typeof part === 'string' ? (
+      part
+    ) : isExternal(part.href) ? (
+      <a
+        class="text-paper underline decoration-amber underline-offset-4"
+        href={part.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {part.label}
+        <span class="sr-only"> (se abre en una pestaña nueva)</span>
+      </a>
+    ) : (
+      <a class="text-paper underline decoration-amber underline-offset-4" href={part.href}>
+        {part.label}
+      </a>
+    ),
+  )
+}

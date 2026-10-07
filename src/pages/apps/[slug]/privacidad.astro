@@ -1,5 +1,6 @@
 ---
-import { apps, type AppRecord } from '../../../data/apps';
+import { apps, isDocumentPrivacy, type AppRecord } from '../../../data/apps';
+import TextParts from '../../../components/TextParts.astro';
 import Base from '../../../layouts/Base.astro';
 
 export function getStaticPaths() {
@@ -19,20 +20,65 @@ const updated = '7 de octubre de 2026';
 
 <Base
   title={`Política de privacidad de ${app.name} — HectorMezaLab`}
-  description={`Política de privacidad de ${app.name} (${app.packageId}). Responsable: Héctor Meza, HectorMezaLab, Honduras. Contacto: hectormezalab@gmail.com.`}
+  description={
+    isDocumentPrivacy(app.privacy)
+      ? `Política de privacidad de ${app.name} (${app.packageId}). Desarrollada por HectorMezaLab. Contacto: hectormezalab@gmail.com.`
+      : `Política de privacidad de ${app.name} (${app.packageId}). Responsable: Héctor Meza, HectorMezaLab, Honduras. Contacto: hectormezalab@gmail.com.`
+  }
 >
   <article class="mx-auto max-w-3xl px-5 py-14 md:py-20">
     <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-      <a class="hover:text-paper" href={`/apps/${app.slug}`}>{app.name}</a>
+      {
+        app.status === 'publicada' ? (
+          <a class="hover:text-paper" href={`/apps/${app.slug}`}>
+            {app.name}
+          </a>
+        ) : (
+          app.name
+        )
+      }
     </p>
     <h1 class="mt-3 font-display text-5xl tracking-tight">Política de privacidad</h1>
     <p class="mt-4 text-muted">Última actualización: {updated}.</p>
-    <p class="mt-4 text-lg leading-relaxed text-muted">
-      Esta es la política de privacidad de {app.name} para Google Play. Describe el tratamiento de los datos en esta aplicación para Android.
-    </p>
+    {
+      isDocumentPrivacy(app.privacy) ? (
+        <p class="mt-4 text-lg leading-relaxed text-muted">{app.privacy.lead}</p>
+      ) : (
+        <p class="mt-4 text-lg leading-relaxed text-muted">
+          Esta es la política de privacidad de {app.name} para Google Play. Describe el tratamiento de los datos en esta aplicación para Android.
+        </p>
+      )
+    }
     <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>
+    {
+      app.status === 'prueba' && (
+        <p class="mt-3 text-muted">En prueba cerrada. Todavía no está publicada en Google Play.</p>
+      )
+    }
 
     <div class="mt-10 grid gap-10 text-lg leading-relaxed">
+      {
+        isDocumentPrivacy(app.privacy) ? (
+          app.privacy.sections.map((section) => (
+            <section lang={section.lang}>
+              <h2 class="font-display text-3xl tracking-tight">{section.heading}</h2>
+              {section.blocks.map((block) =>
+                block.type === 'p' ? (
+                  <p class="mt-3 text-muted">
+                    <TextParts parts={block.parts} />
+                  </p>
+                ) : (
+                  <ul class="mt-4 grid list-disc gap-3 pl-5 text-muted">
+                    {block.items.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                ),
+              )}
+            </section>
+          ))
+        ) : (
+          <>
       <section>
         <h2 class="font-display text-3xl tracking-tight">Responsable</h2>
         <p class="mt-3 text-muted">
@@ -159,9 +205,12 @@ const updated = '7 de octubre de 2026';
           Si esta política se modifica, el texto nuevo se publicará en esta misma página y se actualizará la fecha de «Última actualización». La versión vigente es la del {updated}.
         </p>
       </section>
+          </>
+        )
+      }
 
       {
-        app.disclaimer && (
+        !isDocumentPrivacy(app.privacy) && app.disclaimer && (
           <section class="aviso px-6 py-6">
             <h2 class="font-display text-3xl tracking-tight">Aviso</h2>
             <p class="mt-3">{app.disclaimer.text}</p>
