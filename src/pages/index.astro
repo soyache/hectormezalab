@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import AppCard from '../components/AppCard.astro';
-import { apps } from '../data/apps';
+import { publishedApps } from '../data/apps';
 
-const countLabel = apps.length === 1 ? '1 publicada' : `${apps.length} publicadas`;
+const countLabel = publishedApps.length === 1 ? '1 publicada' : `${publishedApps.length} publicadas`;
 ---
 
 <Base
@@ -26,7 +26,7 @@ const countLabel = apps.length === 1 ? '1 publicada' : `${apps.length} publicada
       <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">{countLabel}</p>
     </div>
     <div class="catalog">
-      {apps.map((app) => <AppCard app={app} />)}
+      {publishedApps.map((app) => <AppCard app={app} />)}
     </div>
   </section>
 

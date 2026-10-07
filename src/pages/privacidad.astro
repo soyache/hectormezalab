@@ -31,7 +31,7 @@ import { apps } from '../data/apps';
       <section>
         <h2 class="font-display text-3xl tracking-tight">Aplicaciones</h2>
         <p class="mt-3 text-muted">
-          Cada aplicación publicada tiene su propia política de privacidad. Esa página es la dirección que corresponde indicar en Google Play. La de este sitio no sustituye la de la aplicación.
+          Cada aplicación tiene su propia política de privacidad. Esa página es la dirección que corresponde indicar en Google Play. La de este sitio no sustituye la de la aplicación.
         </p>
         <ul class="mt-4 grid gap-4">
           {
@@ -41,6 +41,9 @@ import { apps } from '../data/apps';
                   Política de privacidad de {app.name}
                 </a>
                 <p class="mt-1 font-mono text-sm text-paper">/apps/{app.slug}/privacidad</p>
+                {app.status === 'prueba' && (
+                  <p class="mt-1 text-sm text-muted">En prueba cerrada. Todavía no está publicada en Google Play.</p>
+                )}
               </li>
             ))
           }
