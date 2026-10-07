@@ -14,45 +14,152 @@ interface Props {
 }
 
 const { app } = Astro.props;
+const updated = '7 de octubre de 2026';
 ---
 
 <Base
-  title={`Privacidad de ${app.name} — HectorMezaLab`}
-  description={`Privacidad de ${app.name}, app de HectorMezaLab. Contacto: hectormezalab@gmail.com.`}
+  title={`Política de privacidad de ${app.name} — HectorMezaLab`}
+  description={`Política de privacidad de ${app.name} (${app.packageId}). Responsable: Héctor Meza, HectorMezaLab, Honduras. Contacto: hectormezalab@gmail.com.`}
 >
   <article class="mx-auto max-w-3xl px-5 py-14 md:py-20">
     <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">
       <a class="hover:text-paper" href={`/apps/${app.slug}`}>{app.name}</a>
     </p>
-    <h1 class="mt-3 font-display text-5xl tracking-tight">Privacidad</h1>
-    <p class="mt-4 text-muted">Actualizada el 5 de octubre de 2026. Sirve como URL de política de privacidad de esta app en Google Play.</p>
+    <h1 class="mt-3 font-display text-5xl tracking-tight">Política de privacidad</h1>
+    <p class="mt-4 text-muted">Última actualización: {updated}.</p>
+    <p class="mt-4 text-lg leading-relaxed text-muted">
+      Esta es la política de privacidad de {app.name} para Google Play. Describe el tratamiento de los datos en esta aplicación para Android.
+    </p>
+    <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>
 
     <div class="mt-10 grid gap-10 text-lg leading-relaxed">
       <section>
         <h2 class="font-display text-3xl tracking-tight">Responsable</h2>
         <p class="mt-3 text-muted">
-          Héctor Meza, HectorMezaLab, Honduras.
-          <a class="text-paper underline decoration-amber underline-offset-4" href="mailto:hectormezalab@gmail.com">hectormezalab@gmail.com</a>
+          El responsable es Héctor Meza (HectorMezaLab), en Honduras. Para consultas sobre esta política puede escribir a
+          <a class="text-paper underline decoration-amber underline-offset-4" href="mailto:hectormezalab@gmail.com">hectormezalab@gmail.com</a>.
         </p>
       </section>
+
       <section>
-        <h2 class="font-display text-3xl tracking-tight">{app.name}</h2>
+        <h2 class="font-display text-3xl tracking-tight">Datos que usted escribe</h2>
         <p class="mt-3 text-muted">{app.privacy.intro}</p>
-        <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>
-        <ul class="mt-4 grid list-disc gap-3 pl-5 text-muted">
-          {app.privacy.points.map((point) => <li>{point}</li>)}
-        </ul>
+        <p class="mt-3 text-muted">
+          En la aplicación puede indicar si hubo despido, elegir la fecha inicial y la final, escribir el salario y activar los rubros que correspondan a su caso. Esos datos forman parte del mismo cálculo en el dispositivo.
+        </p>
+        <p class="mt-3 text-muted">
+          No se solicitan el nombre, el correo electrónico ni la creación de una cuenta.
+        </p>
+      </section>
+
+      {
+        app.privacy.ads === 'admob' && (
+          <>
+            <section>
+              <h2 class="font-display text-3xl tracking-tight">Anuncios</h2>
+              <p class="mt-3 text-muted">
+                La aplicación muestra anuncios con Google AdMob, mediante el SDK de Google Mobile Ads. Según la
+                <a
+                  class="text-paper underline decoration-amber underline-offset-4"
+                  href="https://developers.google.com/admob/android/privacy/play-data-disclosure"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  guía oficial de Google sobre la divulgación de datos de ese SDK en Google Play
+                  <span class="sr-only"> (se abre en una pestaña nueva)</span>
+                </a>
+                , el SDK recoge y comparte lo siguiente:
+              </p>
+              <ul class="mt-4 grid list-disc gap-3 pl-5 text-muted">
+                <li>Dirección IP, que puede utilizarse para estimar la ubicación aproximada.</li>
+                <li>Interacciones con el producto: inicios de la aplicación, toques y vistas de anuncios.</li>
+                <li>Información de diagnóstico: fallas y rendimiento.</li>
+                <li>Identificadores de dispositivo o de cuenta: el ID de publicidad de Android y el App Set ID.</li>
+              </ul>
+              <p class="mt-4 text-muted">
+                Esos datos se tratan con fines de publicidad, estadísticas y prevención de fraude. Viajan cifrados mediante TLS.
+              </p>
+              <p class="mt-3 text-muted">
+                El tratamiento que realiza Google se describe en su
+                <a
+                  class="text-paper underline decoration-amber underline-offset-4"
+                  href="https://policies.google.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  política de privacidad
+                  <span class="sr-only"> (se abre en una pestaña nueva)</span>
+                </a>
+                y en la página sobre
+                <a
+                  class="text-paper underline decoration-amber underline-offset-4"
+                  href="https://policies.google.com/technologies/partner-sites"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  cómo usa Google los datos de las aplicaciones de sus socios
+                  <span class="sr-only"> (se abre en una pestaña nueva)</span>
+                </a>
+                .
+              </p>
+            </section>
+
+            <section>
+              <h2 class="font-display text-3xl tracking-tight">ID de publicidad</h2>
+              <p class="mt-3 text-muted">
+                Usted puede restablecer o eliminar su ID de publicidad y desactivar la personalización de anuncios desde los ajustes de Android, en Google &gt; Anuncios. El nombre de esas opciones puede variar según la versión del sistema.
+              </p>
+            </section>
+          </>
+        )
+      }
+
+      <section>
+        <h2 class="font-display text-3xl tracking-tight">Venta de datos</h2>
+        <p class="mt-3 text-muted">No vendemos datos personales.</p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-3xl tracking-tight">Seguridad de los datos</h2>
+        <p class="mt-3 text-muted">
+          {app.name} no tiene un servidor propio. El salario, las fechas, la indicación de despido y los rubros se usan en el dispositivo para el cálculo y no los enviamos a nuestros servidores.
+        </p>
         {
-          app.playUrl && (
-            <p class="mt-4">
-              <a class="underline decoration-amber underline-offset-4" href={app.playUrl} target="_blank" rel="noopener noreferrer">
-                Ficha en Google Play
-                <span class="sr-only"> (se abre en una pestaña nueva)</span>
-              </a>
+          app.privacy.ads === 'admob' && (
+            <p class="mt-3 text-muted">
+              Los datos que el SDK de Google Mobile Ads transmite a Google viajan cifrados mediante TLS.
             </p>
           )
         }
       </section>
+
+      <section>
+        <h2 class="font-display text-3xl tracking-tight">Derechos y contacto</h2>
+        <p class="mt-3 text-muted">
+          Puede escribir a
+          <a class="text-paper underline decoration-amber underline-offset-4" href="mailto:hectormezalab@gmail.com">hectormezalab@gmail.com</a>
+          para consultar esta política, pedir información sobre el tratamiento de sus datos o solicitar la eliminación de los datos personales relacionados con esta aplicación que estén en nuestro poder.
+        </p>
+        <p class="mt-3 text-muted">
+          No conservamos el salario, las fechas ni los rubros en servidores nuestros, porque la aplicación no los envía y no dispone de un servidor propio.
+          {
+            app.privacy.ads === 'admob' && (
+              <>
+                {' '}
+                El ID de publicidad y los demás datos que recoge el SDK de anuncios los trata Google, conforme a su política. Para restablecer o eliminar el ID de publicidad, o para desactivar la personalización de anuncios, utilice los ajustes de Android indicados arriba.
+              </>
+            )
+          }
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-3xl tracking-tight">Cambios de esta política</h2>
+        <p class="mt-3 text-muted">
+          Si esta política se modifica, el texto nuevo se publicará en esta misma página y se actualizará la fecha de «Última actualización». La versión vigente es la del {updated}.
+        </p>
+      </section>
+
       {
         app.disclaimer && (
           <section class="aviso px-6 py-6">
@@ -61,8 +168,20 @@ const { app } = Astro.props;
           </section>
         )
       }
+
+      {
+        app.playUrl && (
+          <p>
+            <a class="underline decoration-amber underline-offset-4" href={app.playUrl} target="_blank" rel="noopener noreferrer">
+              Ficha en Google Play
+              <span class="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+          </p>
+        )
+      }
+
       <p class="text-base text-muted">
-        La privacidad del sitio (no de una app concreta) está en <a class="text-paper underline decoration-amber underline-offset-4" href="/privacidad">/privacidad</a>.
+        La privacidad del sitio (no de una aplicación concreta) está en <a class="text-paper underline decoration-amber underline-offset-4" href="/privacidad">/privacidad</a>.
       </p>
     </div>
   </article>
