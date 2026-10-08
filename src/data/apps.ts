@@ -1,8 +1,9 @@
 /**
  * Catálogo de HectorMezaLab. Para sumar una app, agrega un objeto a `apps`.
  * `publicada`: tarjeta en el inicio, ficha y política de privacidad.
- * `prueba`: solo `/apps/<slug>/privacidad` y el listado de `/privacidad`.
- * No entra en el catálogo ni lleva enlace a Google Play.
+ * `prueba`: solo `/apps/<slug>/privacidad` y el listado de `/privacidad`, en prueba cerrada.
+ * `no-publicada`: igual, sin ficha ni enlace a Play, y sin decir que está en prueba.
+ * Ninguna de esas dos entra en el catálogo.
  * app-ads.txt vive solo en la raíz del sitio (`public/app-ads.txt`).
  * AdMob no lee copias bajo /apps/ ni bajo el paquete.
  */
@@ -40,7 +41,7 @@ export type AppRecord = {
   name: string;
   summary: string;
   platform: 'Android';
-  status: 'publicada' | 'prueba';
+  status: 'publicada' | 'prueba' | 'no-publicada';
   packageId: string;
   playUrl?: string;
   /** Nota breve en la tarjeta. El aviso completo vive en la ficha. */
@@ -461,9 +462,223 @@ export const apps: AppRecord[] = [
       ],
     },
   },
+  {
+    slug: 'grabadora',
+    name: 'Grabadora',
+    summary: 'Graba voz en el dispositivo y quita los silencios de las grabaciones WAV.',
+    platform: 'Android',
+    status: 'no-publicada',
+    packageId: 'com.hectormezalab.grabadora',
+    privacy: {
+      lead: 'Esta política explica cómo la aplicación Grabadora (paquete com.hectormezalab.grabadora), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
+      sections: [
+        {
+          heading: 'Resumen',
+          blocks: [
+            {
+              type: 'ul',
+              items: [
+                'No hay cuentas ni inicio de sesión. No se solicitan el nombre ni el correo electrónico.',
+                'El micrófono graba audio solo cuando usted toca Grabar. Las grabaciones WAV se procesan para quitar silencios y se guardan solo en el almacenamiento del dispositivo. Nunca se envían a un servidor nuestro. La aplicación no tiene un servidor propio.',
+                'La aplicación muestra anuncios de banner e intersticial con Google AdMob.',
+                'Usted puede quitar los anuncios con la compra única remove_ads («Quitar anuncios»), procesada por Google Play.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '1. Micrófono (RECORD_AUDIO)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación graba audio solo cuando usted toca Grabar. Puede seguir grabando en segundo plano o con la pantalla bloqueada mediante un servicio en primer plano, con una notificación «Grabando.» y un botón Detener.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Las grabaciones, en formato WAV, se procesan para quitar silencios y se guardan solo en el almacenamiento del dispositivo. Nunca se envían a un servidor nuestro. La aplicación no tiene un servidor propio.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Usted puede compartir un archivo WAV con otras aplicaciones, pero solo si usted decide hacerlo con el botón Compartir. Puede eliminar las grabaciones desde la biblioteca.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Los ajustes (sensibilidad, etc.) se guardan localmente.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '2. Notificaciones (POST_NOTIFICATIONS)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'El permiso de notificaciones se usa solo para la notificación de grabación en curso.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '3. Cuentas',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'No hay cuentas ni inicio de sesión. No se solicitan el nombre ni el correo electrónico.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '4. Anuncios (Google AdMob)',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación muestra anuncios de banner e intersticial con Google AdMob, mediante el SDK de Google Mobile Ads. Según la ',
+                {
+                  href: 'https://developers.google.com/admob/android/privacy/play-data-disclosure',
+                  label: 'guía oficial de Google sobre la divulgación de datos de ese SDK en Google Play',
+                },
+                ', el SDK recoge y comparte lo siguiente:',
+              ],
+            },
+            {
+              type: 'ul',
+              items: [
+                'Dirección IP, que puede utilizarse para estimar la ubicación aproximada.',
+                'Interacciones con el producto: inicios de la aplicación, toques y vistas de anuncios.',
+                'Información de diagnóstico: fallas y rendimiento.',
+                'Identificadores de dispositivo o de cuenta: el ID de publicidad de Android y el App Set ID.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'Esos datos se tratan con fines de publicidad, estadísticas y prevención de fraude. Viajan cifrados mediante TLS.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'El tratamiento que realiza Google se describe en su ',
+                { href: 'https://policies.google.com/privacy', label: 'política de privacidad' },
+                ' y en la página sobre ',
+                {
+                  href: 'https://policies.google.com/technologies/partner-sites',
+                  label: 'cómo usa Google los datos de las aplicaciones de sus socios',
+                },
+                '.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '5. ID de publicidad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Usted puede restablecer o eliminar su ID de publicidad y desactivar la personalización de anuncios desde los ajustes de Android, en Google > Anuncios. El nombre de esas opciones puede variar según la versión del sistema.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '6. Consentimiento',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación usa la plataforma de mensajes de Google (UMP) para el GDPR (Espacio Económico Europeo y Reino Unido) y para las leyes de privacidad de estados de Estados Unidos, antes de pedir anuncios. Si UMP lo exige, Ajustes muestra «Privacidad de anuncios» para cambiar la elección.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '7. Compras dentro de la aplicación',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La compra única del producto remove_ads («Quitar anuncios») la procesa Google Play. No recibimos los datos de pago. Google solo informa si la compra existe, y ese estado se guarda localmente para restaurarla. Con la compra activa no se cargan anuncios.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '8. Menores de edad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación está dirigida al público general y no está dirigida a niños. No recopilamos a sabiendas datos personales de niños. Si usted cree que un niño nos proporcionó información, contáctenos y la eliminaremos.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '9. Seguridad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Las grabaciones y los ajustes se guardan solo en el almacenamiento del dispositivo. Nunca se envían a un servidor nuestro. La aplicación no tiene un servidor propio. Los datos que el SDK de Google Mobile Ads transmite a Google viajan cifrados mediante TLS.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '10. Sus derechos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Como las grabaciones no se envían a un servidor nuestro, usted puede ejercer el control directamente: eliminar las grabaciones desde la biblioteca, borrar los datos de la aplicación desde los ajustes de Android o desinstalarla.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '11. Cambios de esta política',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Podemos actualizar esta política. Publicaremos la versión nueva en esta página con su fecha de actualización.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '12. Contacto',
+          blocks: [
+            {
+              type: 'p',
+              parts: ['Si tiene preguntas sobre esta política, escríbanos a ', contactEmail, '.'],
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export const publishedApps = apps.filter((app) => app.status === 'publicada');
+
+export function unpublishedNote(status: AppRecord['status']) {
+  if (status === 'prueba') return 'En prueba cerrada. Todavía no está publicada en Google Play.';
+  if (status === 'no-publicada') return 'Todavía no está publicada en Google Play.';
+  return undefined;
+}
 
 export function getApp(slug: string) {
   return apps.find((app) => app.slug === slug);
