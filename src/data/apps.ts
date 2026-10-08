@@ -1,7 +1,6 @@
 /**
- * Catálogo de HectorMezaLab. Para sumar un proyecto, agrega un objeto a `apps`.
+ * Catálogo de HectorMezaLab. Para sumar una app, agrega un objeto a `apps`.
  * `publicada`: tarjeta, ficha y, si trae `privacy`, política.
- * `descarga` y `negocio`: tarjeta y ficha. Política solo si trae `privacy`.
  * `prueba`: solo `/apps/<slug>/privacidad` y el listado de `/privacidad`, en prueba cerrada.
  * `no-publicada`: igual, sin ficha ni enlace a Play, y sin decir que está en prueba.
  * Esas dos no entran en el catálogo del inicio.
@@ -37,20 +36,16 @@ export type CatalogPrivacy = {
   ads?: 'admob';
 };
 
-export type AppStatus = 'publicada' | 'prueba' | 'no-publicada' | 'descarga' | 'negocio';
+export type AppStatus = 'publicada' | 'prueba' | 'no-publicada';
 
 export type AppRecord = {
   slug: string;
   name: string;
   summary: string;
-  platform: string;
+  platform: 'Android';
   status: AppStatus;
-  packageId?: string;
+  packageId: string;
   playUrl?: string;
-  /** Instalador público. No enlaces un repositorio privado. */
-  downloadUrl?: string;
-  downloadLabel?: string;
-  contact?: { href: string; label: string };
   /** Nota breve en la tarjeta. El aviso completo vive en la ficha. */
   cardNote?: string;
   /** Pasos reales de la app, en el orden de uso. Omítelos si no constan. */
@@ -835,30 +830,6 @@ export const apps: AppRecord[] = [
     packageId: 'com.hectormeza.cuotaprestamos',
     playUrl: 'https://play.google.com/store/apps/details?id=com.hectormeza.cuotaprestamos',
   },
-  {
-    slug: 'paynyk',
-    name: 'Paynyk',
-    summary:
-      'Punto de venta para negocios. Hay instalador público para Windows y APK para Android. Al abrir el programa se ingresa un código de activación.',
-    platform: 'Windows y Android',
-    status: 'negocio',
-    downloadUrl: 'https://github.com/soyache/payly-releases/releases/latest',
-    downloadLabel: 'Instaladores',
-    contact: {
-      href: 'https://wa.me/50433909896',
-      label: 'WhatsApp +504 3390-9896',
-    },
-  },
-  {
-    slug: 'bokey',
-    name: 'Bokey',
-    summary:
-      'Walkie de un canal: se mantiene el botón para hablar y se suelta para escuchar. Hay lista de personas en el canal. El APK se instala desde las releases públicas.',
-    platform: 'Android',
-    status: 'descarga',
-    downloadUrl: 'https://github.com/soyache/bokey-releases/releases/latest',
-    downloadLabel: 'Descargar APK',
-  },
 ];
 
 export function unpublishedNote(status: AppRecord['status']) {
@@ -868,7 +839,7 @@ export function unpublishedNote(status: AppRecord['status']) {
 }
 
 export function hasDetailPage(status: AppRecord['status']) {
-  return status === 'publicada' || status === 'descarga' || status === 'negocio';
+  return status === 'publicada';
 }
 
 export function statusLabel(status: AppRecord['status']) {
@@ -879,17 +850,7 @@ export function statusLabel(status: AppRecord['status']) {
       return 'En prueba';
     case 'no-publicada':
       return 'Sin publicar';
-    case 'descarga':
-      return 'Descarga directa';
-    case 'negocio':
-      return 'Software para negocios';
   }
-}
-
-export function catalogAnchor(status: AppRecord['status']) {
-  if (status === 'negocio') return '/#negocios';
-  if (status === 'descarga') return '/#descargas';
-  return '/#apps';
 }
 
 export type CatalogSection = {
@@ -904,31 +865,15 @@ function countLabel(count: number, one: string, many: string) {
 }
 
 export function catalogSections(): CatalogSection[] {
-  const byStatus = (status: AppRecord['status']) => apps.filter((app) => app.status === status);
-  const play = byStatus('publicada');
-  const negocio = byStatus('negocio');
-  const descarga = byStatus('descarga');
-  const sections: CatalogSection[] = [
+  const play = apps.filter((app) => app.status === 'publicada');
+  return [
     {
       id: 'apps',
       title: 'Apps Android en Google Play',
       countLabel: countLabel(play.length, 'en Google Play', 'en Google Play'),
       apps: play,
     },
-    {
-      id: 'negocios',
-      title: 'Software para negocios',
-      countLabel: countLabel(negocio.length, 'programa', 'programas'),
-      apps: negocio,
-    },
-    {
-      id: 'descargas',
-      title: 'Descarga directa',
-      countLabel: countLabel(descarga.length, 'descarga', 'descargas'),
-      apps: descarga,
-    },
   ];
-  return sections.filter((section) => section.apps.length > 0);
 }
 
 export function getApp(slug: string) {

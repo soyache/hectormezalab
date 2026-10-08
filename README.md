@@ -1,6 +1,6 @@
 # HectorMezaLab
 
-Sitio estático del taller de **Héctor Meza** (HectorMezaLab, Honduras). El inicio agrupa apps de Google Play, software para negocios y descargas directas. **Prestaciones Laboral Honduras** (`com.hectormezalab.prestacioneshn`) es una ficha del catálogo, no la identidad del sitio.
+Sitio estático del taller de **Héctor Meza** (HectorMezaLab, Honduras). El inicio lista las apps publicadas en Google Play. **Prestaciones Laboral Honduras** (`com.hectormezalab.prestacioneshn`) es una ficha del catálogo, no la identidad del sitio.
 
 Repositorio: [soyache/hectormezalab](https://github.com/soyache/hectormezalab).
 
@@ -17,7 +17,7 @@ La salida queda en `dist/`. `npm run dev` abre el sitio en local. `npm run previ
 
 Edita `src/data/apps.ts` y suma un objeto al arreglo `apps`.
 
-- `publicada`, `descarga` y `negocio` entran en el inicio y generan `/apps/<slug>`.
+- `publicada` entra en el inicio y genera `/apps/<slug>`.
 - `prueba` y `no-publicada` no entran en el inicio. Si traen `privacy`, solo generan `/apps/<slug>/privacidad`.
 - La política `/apps/<slug>/privacidad` se genera únicamente cuando el objeto trae `privacy`.
 
@@ -45,7 +45,7 @@ Ese archivo sale de `public/app-ads.txt` y queda en la raíz de `dist/`. `robots
 
 ## Páginas
 
-- `/` portafolio, con las secciones Apps Android en Google Play, Software para negocios y Descarga directa
+- `/` portafolio, con las apps Android en Google Play
 - `/apps/prestaciones-laboral` ficha de Prestaciones Laboral Honduras
 - `/apps/prestaciones-laboral/privacidad` política para Google Play de esa app
 - `/privacidad` privacidad del sitio y listado de las políticas que sí existen
