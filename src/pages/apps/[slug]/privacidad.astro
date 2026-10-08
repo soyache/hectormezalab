@@ -1,5 +1,5 @@
 ---
-import { apps, isDocumentPrivacy, type AppRecord } from '../../../data/apps';
+import { apps, isDocumentPrivacy, unpublishedNote, type AppRecord } from '../../../data/apps';
 import TextParts from '../../../components/TextParts.astro';
 import Base from '../../../layouts/Base.astro';
 
@@ -51,8 +51,8 @@ const updated = '7 de octubre de 2026';
     }
     <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>
     {
-      app.status === 'prueba' && (
-        <p class="mt-3 text-muted">En prueba cerrada. Todavía no está publicada en Google Play.</p>
+      unpublishedNote(app.status) && (
+        <p class="mt-3 text-muted">{unpublishedNote(app.status)}</p>
       )
     }
 

@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { apps } from '../data/apps';
+import { apps, unpublishedNote } from '../data/apps';
 ---
 
 <Base
@@ -41,8 +41,8 @@ import { apps } from '../data/apps';
                   Política de privacidad de {app.name}
                 </a>
                 <p class="mt-1 font-mono text-sm text-paper">/apps/{app.slug}/privacidad</p>
-                {app.status === 'prueba' && (
-                  <p class="mt-1 text-sm text-muted">En prueba cerrada. Todavía no está publicada en Google Play.</p>
+                {unpublishedNote(app.status) && (
+                  <p class="mt-1 text-sm text-muted">{unpublishedNote(app.status)}</p>
                 )}
               </li>
             ))
