@@ -464,13 +464,13 @@ export const apps: AppRecord[] = [
   },
   {
     slug: 'grabadora',
-    name: 'Grabadora',
+    name: 'Quitar silencios de audio',
     summary: 'Graba voz en el dispositivo y quita los silencios de las grabaciones WAV.',
     platform: 'Android',
     status: 'no-publicada',
     packageId: 'com.hectormezalab.grabadora',
     privacy: {
-      lead: 'Esta política explica cómo la aplicación Grabadora (paquete com.hectormezalab.grabadora), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
+      lead: 'Esta política explica cómo la aplicación Quitar silencios de audio (paquete com.hectormezalab.grabadora), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
       sections: [
         {
           heading: 'Resumen',
