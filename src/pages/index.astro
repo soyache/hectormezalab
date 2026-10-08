@@ -1,34 +1,46 @@
 ---
 import Base from '../layouts/Base.astro';
 import AppCard from '../components/AppCard.astro';
-import { publishedApps } from '../data/apps';
+import { catalogSections } from '../data/apps';
 
-const countLabel = publishedApps.length === 1 ? '1 publicada' : `${publishedApps.length} publicadas`;
+const sections = catalogSections();
 ---
 
 <Base
   title="HectorMezaLab — apps Android"
-  description="HectorMezaLab es el taller de Héctor Meza en Honduras. Apps Android útiles para Honduras y Latinoamérica. La primera ficha es Prestaciones Laboral Honduras."
+  description="HectorMezaLab es el taller de Héctor Meza en Honduras. Apps Android publicadas en Google Play."
 >
   <section class="mx-auto max-w-5xl px-5 pb-10 pt-14 md:pb-14 md:pt-20">
     <p class="font-mono text-xs uppercase tracking-[0.18em] text-amber">Héctor Meza · Honduras</p>
-    <h1 class="mt-4 max-w-[14ch] font-display text-[2.7rem] leading-[0.95] tracking-tight text-paper sm:text-6xl">
-      Apps concretas para Honduras.
+    <h1 class="mt-4 max-w-[16ch] font-display text-[2.7rem] leading-[0.95] tracking-tight text-paper sm:text-6xl">
+      Apps Android desde Honduras.
     </h1>
     <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-      HectorMezaLab es el sitio de Héctor Meza. Aquí están las apps Android que publica para tareas de Honduras y del resto de Latinoamérica.
+      HectorMezaLab es el sitio de Héctor Meza. Aquí están las apps que publica en Google Play.
     </p>
   </section>
 
-  <section id="apps" class="mx-auto max-w-5xl px-5 pb-16 md:pb-24" aria-labelledby="apps-titulo">
-    <div class="mb-5 flex items-baseline justify-between gap-4 border-b border-line pb-3">
-      <h2 id="apps-titulo" class="font-display text-3xl tracking-tight">Apps</h2>
-      <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">{countLabel}</p>
-    </div>
-    <div class="catalog">
-      {publishedApps.map((app) => <AppCard app={app} />)}
-    </div>
-  </section>
+  {
+    sections.map((section, index) => (
+      <section
+        id={section.id}
+        class:list={['mx-auto max-w-5xl px-5', index === sections.length - 1 ? 'pb-16 md:pb-24' : 'pb-12 md:pb-16']}
+        aria-labelledby={`${section.id}-titulo`}
+      >
+        <div class="mb-5 flex items-baseline justify-between gap-4 border-b border-line pb-3">
+          <h2 id={`${section.id}-titulo`} class="font-display text-3xl tracking-tight">
+            {section.title}
+          </h2>
+          <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">{section.countLabel}</p>
+        </div>
+        <div class="catalog">
+          {section.apps.map((app) => (
+            <AppCard app={app} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
 
   <section class="border-t border-line" aria-labelledby="taller-titulo">
     <div class="mx-auto max-w-5xl px-5 py-14 md:py-16">

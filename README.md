@@ -1,6 +1,6 @@
 # HectorMezaLab
 
-Sitio estático del taller de **Héctor Meza** (HectorMezaLab, Honduras). El inicio es un catálogo de apps Android. **Prestaciones Laboral Honduras** (`com.hectormezalab.prestacioneshn`) es la primera ficha, no la identidad del sitio.
+Sitio estático del taller de **Héctor Meza** (HectorMezaLab, Honduras). El inicio lista las apps publicadas en Google Play. **Prestaciones Laboral Honduras** (`com.hectormezalab.prestacioneshn`) es una ficha del catálogo, no la identidad del sitio.
 
 Repositorio: [soyache/hectormezalab](https://github.com/soyache/hectormezalab).
 
@@ -13,9 +13,13 @@ npm run build
 
 La salida queda en `dist/`. `npm run dev` abre el sitio en local. `npm run preview` sirve `dist/`.
 
-## Agregar una app
+## Agregar un proyecto
 
-Edita `src/data/apps.ts` y suma un objeto al arreglo `apps`. Con eso se generan la tarjeta del inicio, `/apps/<slug>` y `/apps/<slug>/privacidad`.
+Edita `src/data/apps.ts` y suma un objeto al arreglo `apps`.
+
+- `publicada` entra en el inicio y genera `/apps/<slug>`.
+- `prueba` y `no-publicada` no entran en el inicio. Si traen `privacy`, solo generan `/apps/<slug>/privacidad`.
+- La política `/apps/<slug>/privacidad` se genera únicamente cuando el objeto trae `privacy`.
 
 No crees `app-ads.txt` dentro de la ficha ni bajo el paquete. AdMob solo consulta la raíz del sitio web del desarrollador.
 
@@ -41,8 +45,8 @@ Ese archivo sale de `public/app-ads.txt` y queda en la raíz de `dist/`. `robots
 
 ## Páginas
 
-- `/` portafolio y sección Apps
-- `/apps/prestaciones-laboral` ficha de la primera app
+- `/` portafolio, con las apps Android en Google Play
+- `/apps/prestaciones-laboral` ficha de Prestaciones Laboral Honduras
 - `/apps/prestaciones-laboral/privacidad` política para Google Play de esa app
-- `/privacidad` privacidad del sitio
+- `/privacidad` privacidad del sitio y listado de las políticas que sí existen
 - `/app-ads.txt` autorización de AdMob, solo en la raíz

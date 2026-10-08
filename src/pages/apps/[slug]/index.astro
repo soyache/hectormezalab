@@ -1,11 +1,11 @@
 ---
-import { apps, type AppRecord } from '../../../data/apps';
+import { apps, hasDetailPage, statusLabel, type AppRecord } from '../../../data/apps';
 import Base from '../../../layouts/Base.astro';
 import Boleta from '../../../components/Boleta.astro';
 
 export function getStaticPaths() {
   return apps
-    .filter((app) => app.status === 'publicada')
+    .filter((app) => hasDetailPage(app.status))
     .map((app) => ({
       params: { slug: app.slug },
       props: { app },
@@ -22,7 +22,7 @@ const { app } = Astro.props;
 <Base title={`${app.name} — HectorMezaLab`} description={app.summary}>
   <article class="mx-auto max-w-5xl px-5 py-12 md:py-16">
     <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-      <a class="hover:text-paper" href="/#apps">Apps</a>
+      <a class="hover:text-paper" href="/#apps">{statusLabel(app.status)}</a>
       <span aria-hidden="true"> / </span>
       {app.platform}
     </p>
@@ -30,8 +30,8 @@ const { app } = Astro.props;
       <div>
         <h1 class="font-display text-4xl leading-[1.02] tracking-tight sm:text-5xl">{app.name}</h1>
         <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">{app.summary}</p>
-        <p class="mt-4 font-mono text-xs text-paper">{app.packageId}</p>
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        {app.packageId && <p class="mt-4 font-mono text-xs text-paper">{app.packageId}</p>}
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           {
             app.playUrl && (
               <a
@@ -45,12 +45,16 @@ const { app } = Astro.props;
               </a>
             )
           }
-          <a
-            href={`/apps/${app.slug}/privacidad`}
-            class="inline-flex min-h-12 items-center justify-center text-paper underline decoration-amber decoration-2 underline-offset-4"
-          >
-            Privacidad de la app
-          </a>
+          {
+            app.privacy && (
+              <a
+                href={`/apps/${app.slug}/privacidad`}
+                class="inline-flex min-h-12 items-center justify-center text-paper underline decoration-amber decoration-2 underline-offset-4"
+              >
+                Privacidad de la app
+              </a>
+            )
+          }
         </div>
         {
           app.steps && app.steps.length > 0 && (

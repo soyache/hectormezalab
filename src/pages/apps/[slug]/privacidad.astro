@@ -1,13 +1,15 @@
 ---
-import { apps, isDocumentPrivacy, unpublishedNote, type AppRecord } from '../../../data/apps';
+import { apps, hasDetailPage, isDocumentPrivacy, unpublishedNote, type AppRecord } from '../../../data/apps';
 import TextParts from '../../../components/TextParts.astro';
 import Base from '../../../layouts/Base.astro';
 
 export function getStaticPaths() {
-  return apps.map((app) => ({
-    params: { slug: app.slug },
-    props: { app },
-  }));
+  return apps
+    .filter((app) => app.privacy)
+    .map((app) => ({
+      params: { slug: app.slug },
+      props: { app },
+    }));
 }
 
 interface Props {
@@ -15,21 +17,25 @@ interface Props {
 }
 
 const { app } = Astro.props;
-const updated = '7 de octubre de 2026';
+const privacy = app.privacy;
+if (!privacy) {
+  throw new Error(`Sin política de privacidad: ${app.slug}`);
+}
+const updated = app.privacyUpdated ?? '7 de octubre de 2026';
 ---
 
 <Base
   title={`Política de privacidad de ${app.name} — HectorMezaLab`}
   description={
-    isDocumentPrivacy(app.privacy)
-      ? `Política de privacidad de ${app.name} (${app.packageId}). Desarrollada por HectorMezaLab. Contacto: hectormezalab@gmail.com.`
-      : `Política de privacidad de ${app.name} (${app.packageId}). Responsable: Héctor Meza, HectorMezaLab, Honduras. Contacto: hectormezalab@gmail.com.`
+    isDocumentPrivacy(privacy)
+      ? `Política de privacidad de ${app.name}${app.packageId ? ` (${app.packageId})` : ''}. Desarrollada por HectorMezaLab. Contacto: hectormezalab@gmail.com.`
+      : `Política de privacidad de ${app.name}${app.packageId ? ` (${app.packageId})` : ''}. Responsable: Héctor Meza, HectorMezaLab, Honduras. Contacto: hectormezalab@gmail.com.`
   }
 >
   <article class="mx-auto max-w-3xl px-5 py-14 md:py-20">
     <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted">
       {
-        app.status === 'publicada' ? (
+        hasDetailPage(app.status) ? (
           <a class="hover:text-paper" href={`/apps/${app.slug}`}>
             {app.name}
           </a>
@@ -41,15 +47,15 @@ const updated = '7 de octubre de 2026';
     <h1 class="mt-3 font-display text-5xl tracking-tight">Política de privacidad</h1>
     <p class="mt-4 text-muted">Última actualización: {updated}.</p>
     {
-      isDocumentPrivacy(app.privacy) ? (
-        <p class="mt-4 text-lg leading-relaxed text-muted">{app.privacy.lead}</p>
+      isDocumentPrivacy(privacy) ? (
+        <p class="mt-4 text-lg leading-relaxed text-muted">{privacy.lead}</p>
       ) : (
         <p class="mt-4 text-lg leading-relaxed text-muted">
           Esta es la política de privacidad de {app.name} para Google Play. Describe el tratamiento de los datos en esta aplicación para Android.
         </p>
       )
     }
-    <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>
+    {app.packageId && <p class="mt-3 font-mono text-sm text-paper">{app.packageId}</p>}
     {
       unpublishedNote(app.status) && (
         <p class="mt-3 text-muted">{unpublishedNote(app.status)}</p>
@@ -58,8 +64,8 @@ const updated = '7 de octubre de 2026';
 
     <div class="mt-10 grid gap-10 text-lg leading-relaxed">
       {
-        isDocumentPrivacy(app.privacy) ? (
-          app.privacy.sections.map((section) => (
+        isDocumentPrivacy(privacy) ? (
+          privacy.sections.map((section) => (
             <section lang={section.lang}>
               <h2 class="font-display text-3xl tracking-tight">{section.heading}</h2>
               {section.blocks.map((block) =>
@@ -89,7 +95,7 @@ const updated = '7 de octubre de 2026';
 
       <section>
         <h2 class="font-display text-3xl tracking-tight">Datos que usted escribe</h2>
-        <p class="mt-3 text-muted">{app.privacy.intro}</p>
+        <p class="mt-3 text-muted">{privacy.intro}</p>
         <p class="mt-3 text-muted">
           En la aplicación puede indicar si hubo despido, elegir la fecha inicial y la final, escribir el salario y activar los rubros que correspondan a su caso. Esos datos forman parte del mismo cálculo en el dispositivo.
         </p>
@@ -99,7 +105,7 @@ const updated = '7 de octubre de 2026';
       </section>
 
       {
-        app.privacy.ads === 'admob' && (
+        !isDocumentPrivacy(privacy) && privacy.ads === 'admob' && (
           <>
             <section>
               <h2 class="font-display text-3xl tracking-tight">Anuncios</h2>
@@ -171,7 +177,7 @@ const updated = '7 de octubre de 2026';
           {app.name} no tiene un servidor propio. El salario, las fechas, la indicación de despido y los rubros se usan en el dispositivo para el cálculo y no los enviamos a nuestros servidores.
         </p>
         {
-          app.privacy.ads === 'admob' && (
+          !isDocumentPrivacy(privacy) && privacy.ads === 'admob' && (
             <p class="mt-3 text-muted">
               Los datos que el SDK de Google Mobile Ads transmite a Google viajan cifrados mediante TLS.
             </p>
@@ -189,7 +195,7 @@ const updated = '7 de octubre de 2026';
         <p class="mt-3 text-muted">
           No conservamos el salario, las fechas ni los rubros en servidores nuestros, porque la aplicación no los envía y no dispone de un servidor propio.
           {
-            app.privacy.ads === 'admob' && (
+            !isDocumentPrivacy(privacy) && privacy.ads === 'admob' && (
               <>
                 {' '}
                 El ID de publicidad y los demás datos que recoge el SDK de anuncios los trata Google, conforme a su política. Para restablecer o eliminar el ID de publicidad, o para desactivar la personalización de anuncios, utilice los ajustes de Android indicados arriba.

@@ -1,9 +1,9 @@
 /**
  * Catálogo de HectorMezaLab. Para sumar una app, agrega un objeto a `apps`.
- * `publicada`: tarjeta en el inicio, ficha y política de privacidad.
+ * `publicada`: tarjeta, ficha y, si trae `privacy`, política.
  * `prueba`: solo `/apps/<slug>/privacidad` y el listado de `/privacidad`, en prueba cerrada.
  * `no-publicada`: igual, sin ficha ni enlace a Play, y sin decir que está en prueba.
- * Ninguna de esas dos entra en el catálogo.
+ * Esas dos no entran en el catálogo del inicio.
  * app-ads.txt vive solo en la raíz del sitio (`public/app-ads.txt`).
  * AdMob no lee copias bajo /apps/ ni bajo el paquete.
  */
@@ -36,12 +36,14 @@ export type CatalogPrivacy = {
   ads?: 'admob';
 };
 
+export type AppStatus = 'publicada' | 'prueba' | 'no-publicada';
+
 export type AppRecord = {
   slug: string;
   name: string;
   summary: string;
   platform: 'Android';
-  status: 'publicada' | 'prueba' | 'no-publicada';
+  status: AppStatus;
   packageId: string;
   playUrl?: string;
   /** Nota breve en la tarjeta. El aviso completo vive en la ficha. */
@@ -54,7 +56,10 @@ export type AppRecord = {
     text: string;
     links: { href: string; label: string }[];
   };
-  privacy: CatalogPrivacy | DocumentPrivacy;
+  /** Si falta, no se genera `/apps/<slug>/privacidad`. */
+  privacy?: CatalogPrivacy | DocumentPrivacy;
+  /** Fecha visible de la política. Si falta, queda la de las políticas anteriores. */
+  privacyUpdated?: string;
 };
 
 const googlePartner = {
@@ -670,9 +675,162 @@ export const apps: AppRecord[] = [
       ],
     },
   },
+  {
+    slug: 'escuchar-audiolibros',
+    name: 'Escuchar Audiolibros',
+    summary:
+      'Reproductor local de audiolibros. Reproduce archivos de audio del dispositivo, organiza la biblioteca y sigue desde donde se dejó. No pide cuenta ni muestra publicidad.',
+    platform: 'Android',
+    status: 'publicada',
+    packageId: 'com.soyache.audiobooks',
+    playUrl: 'https://play.google.com/store/apps/details?id=com.soyache.audiobooks',
+    cardNote: 'Los archivos se quedan en el dispositivo. Funciona sin conexión.',
+    steps: [
+      'Reproduce archivos de audio que ya están en el dispositivo.',
+      'Organiza la biblioteca para encontrar los títulos.',
+      'La reproducción continúa desde donde se dejó.',
+    ],
+  },
+  {
+    slug: 'gasto-de-comida',
+    name: 'Gasto de Comida',
+    summary:
+      'Registra desayuno, almuerzo y cena, y anota abonos para bajar el saldo. Los precios, la moneda y los movimientos se guardan en el teléfono.',
+    platform: 'Android',
+    status: 'publicada',
+    packageId: 'com.hectormeza.comidas',
+    playUrl: 'https://play.google.com/store/apps/details?id=com.hectormeza.comidas',
+    cardNote: 'Sin anuncios y sin cuenta.',
+    steps: [
+      'Registra la comida de esta hora. La aplicación elige desayuno, almuerzo o cena según la hora.',
+      'Anota comidas de otros días, con cantidad y una nota si hace falta.',
+      'Registra abonos para bajar el saldo. Los precios y la moneda se cambian en la configuración.',
+      'El widget de inicio guarda la comida de la hora actual en el mismo registro local.',
+    ],
+    privacyUpdated: '8 de octubre de 2026',
+    privacy: {
+      lead: 'Esta política explica cómo la aplicación Gasto de Comida (paquete com.hectormeza.comidas), desarrollada por HectorMezaLab («nosotros»), trata la información cuando usted la usa.',
+      sections: [
+        {
+          heading: 'Resumen',
+          blocks: [
+            {
+              type: 'ul',
+              items: [
+                'No hay cuentas ni inicio de sesión. No se piden el nombre ni el correo.',
+                'Las comidas, los abonos, los precios, la moneda y las notas se guardan en una base SQLite del dispositivo (comidas_app.db). La aplicación no tiene un servidor propio.',
+                'El manifiesto no declara permiso de Internet ni incluye un SDK de anuncios, de analítica ni de Firebase.',
+                'La tipografía Plus Jakarta Sans se pide al proveedor de fuentes de los servicios de Google Play en el dispositivo.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '1. Información que se guarda en el dispositivo',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La base local guarda movimientos de comida y de abono (monto, fecha, tipo de comida, cantidad y una nota opcional), los precios de desayuno, almuerzo y cena, las monedas personalizadas y ajustes de la aplicación.',
+              ],
+            },
+            {
+              type: 'p',
+              parts: [
+                'El widget de inicio registra la comida que corresponde a la hora actual y la escribe en esa misma base. Puede borrar movimientos desde la aplicación. Los datos locales se borran si usted desinstala la aplicación o borra sus datos desde los ajustes de Android.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '2. Lo que la aplicación no envía',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'El manifiesto no declara permisos. No hay permiso de Internet, de ubicación, de contactos, de micrófono ni de fotos. En las dependencias del proyecto no hay SDK de anuncios, de analítica ni de Firebase. Nosotros no recibimos las comidas, los montos ni las notas en un servidor.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '3. Fuentes en el dispositivo',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La interfaz usa la fuente Plus Jakarta Sans a través del proveedor de fuentes de los servicios de Google Play (com.google.android.gms.fonts). Esa petición la atiende el proveedor de fuentes del dispositivo. No incluye las comidas, los montos ni las notas.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '4. Copia de seguridad de Android',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'El manifiesto deja allowBackup en true. Los archivos de reglas de copia (backup_rules.xml y data_extraction_rules.xml) son la plantilla vacía del proyecto de Android: no declaran inclusiones ni exclusiones propias. Si el sistema hace una copia de la aplicación, esa copia la gestiona Android con la cuenta del dispositivo, no un servidor de HectorMezaLab.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '5. Menores de edad',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'La aplicación está dirigida al público general y no está diseñada específicamente para niños menores de 13 años. No recopilamos a sabiendas datos personales de niños. Si usted cree que un niño nos proporcionó información, contáctenos y la eliminaremos.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '6. Sus derechos',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Como no tenemos sus movimientos en nuestros servidores, usted puede ejercer el control directamente: borrar registros en la aplicación, borrar los datos de la aplicación desde los ajustes de Android o desinstalarla.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '7. Cambios de esta política',
+          blocks: [
+            {
+              type: 'p',
+              parts: [
+                'Podemos actualizar esta política. Publicaremos la versión nueva en esta página con su fecha de actualización.',
+              ],
+            },
+          ],
+        },
+        {
+          heading: '8. Contacto',
+          blocks: [
+            {
+              type: 'p',
+              parts: ['Si tiene preguntas sobre esta política, escríbanos a ', contactEmail, '.'],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    slug: 'cuota-prestamo',
+    name: 'Cuota Préstamo',
+    summary:
+      'Calcula cuotas niveladas de un préstamo. La ficha en Google Play dice que la interfaz no muestra anuncios que estorben el uso.',
+    platform: 'Android',
+    status: 'publicada',
+    packageId: 'com.hectormeza.cuotaprestamos',
+    playUrl: 'https://play.google.com/store/apps/details?id=com.hectormeza.cuotaprestamos',
+  },
 ];
-
-export const publishedApps = apps.filter((app) => app.status === 'publicada');
 
 export function unpublishedNote(status: AppRecord['status']) {
   if (status === 'prueba') return 'En prueba cerrada. Todavía no está publicada en Google Play.';
@@ -680,10 +838,48 @@ export function unpublishedNote(status: AppRecord['status']) {
   return undefined;
 }
 
+export function hasDetailPage(status: AppRecord['status']) {
+  return status === 'publicada';
+}
+
+export function statusLabel(status: AppRecord['status']) {
+  switch (status) {
+    case 'publicada':
+      return 'En Google Play';
+    case 'prueba':
+      return 'En prueba';
+    case 'no-publicada':
+      return 'Sin publicar';
+  }
+}
+
+export type CatalogSection = {
+  id: string;
+  title: string;
+  countLabel: string;
+  apps: AppRecord[];
+};
+
+function countLabel(count: number, one: string, many: string) {
+  return count === 1 ? `1 ${one}` : `${count} ${many}`;
+}
+
+export function catalogSections(): CatalogSection[] {
+  const play = apps.filter((app) => app.status === 'publicada');
+  return [
+    {
+      id: 'apps',
+      title: 'Apps Android en Google Play',
+      countLabel: countLabel(play.length, 'en Google Play', 'en Google Play'),
+      apps: play,
+    },
+  ];
+}
+
 export function getApp(slug: string) {
   return apps.find((app) => app.slug === slug);
 }
 
 export function isDocumentPrivacy(privacy: AppRecord['privacy']): privacy is DocumentPrivacy {
-  return 'sections' in privacy;
+  return !!privacy && 'sections' in privacy;
 }
